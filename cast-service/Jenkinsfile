@@ -48,6 +48,7 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
+                  ls -la
                   cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
