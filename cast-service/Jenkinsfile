@@ -10,6 +10,14 @@ pipeline {
     }
     agent any
     stages {
+stage('Debug') {
+    steps {
+        script {
+            echo "BRANCH_NAME = ${env.BRANCH_NAME}"
+            sh 'git branch'
+        }
+    }
+}
         stage('Build') {
             steps {
                 dir("${DOCKER_IMAGE}") {
