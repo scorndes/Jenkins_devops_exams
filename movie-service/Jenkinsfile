@@ -3,6 +3,10 @@ pipeline {
         DOCKER_ID = 'scornedevops'
         DOCKER_IMAGE = 'movie-service'
         DOCKER_TAG = "v.${BUILD_ID}.0"
+        ENV_DEV = 'dev'
+        ENV_QA = 'qa'
+        ENV_STAGING = 'staging'
+        ENV_PROD = 'prod'
     }
     agent any
     stages {
@@ -49,7 +53,7 @@ pipeline {
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
                   ls -la
-                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}/values-${ENV_DEV}.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                   helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace dev
@@ -68,7 +72,7 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}/values-${ENV_QA}.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                   helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace qa
@@ -87,7 +91,7 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}/values-${ENV_STAGING}.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                   helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace staging
@@ -97,7 +101,7 @@ pipeline {
         }
         stage('Deploiement en prod') {
             when {
-                 branch 'master'
+                branch 'master'
             }
             environment
         {
@@ -115,7 +119,7 @@ pipeline {
                         rm -Rf .kube
                         mkdir .kube
                         cat $KUBECONFIG > .kube/config
-                        cp charts/${DOCKER_IMAGE}-values.yaml values.yml
+                        cp charts/${DOCKER_IMAGE}/values-${ENV_PROD}.yaml values.yml
                         cat values.yml
                         sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                         helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace prod
