@@ -19,7 +19,7 @@ pipeline {
                 script {
                     sh """
                       docker rm -f $DOCKER_IMAGE || true
-                      docker run -d -p 8082:80 --name $DOCKER_IMAGE $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG
+                      docker run -d -p 8081:80 --name $DOCKER_IMAGE $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG
                       echo "Test terminé : le conteneur s'est lancé sans erreur"
                   """
                 }
@@ -48,10 +48,11 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  ls -la
+                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                  helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace dev
+                  helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace dev
                   '''
                 }
             }
@@ -67,10 +68,10 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                  helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace qa
+                  helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace qa
                   '''
                 }
             }
@@ -86,19 +87,18 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                  helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace staging
+                  helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace staging
                   '''
                 }
             }
         }
         stage('Deploiement en prod') {
-            when 
-        {
+            when {
                  branch 'master'
-        }
+            }
             environment
         {
                 KUBECONFIG = credentials('config') // we retrieve  kubeconfig from secret file called config saved on jenkins
@@ -115,10 +115,10 @@ pipeline {
                         rm -Rf .kube
                         mkdir .kube
                         cat $KUBECONFIG > .kube/config
-                        cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                        cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                         cat values.yml
                         sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                        helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace prod
+                        helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace prod
                         '''
                     }
             }

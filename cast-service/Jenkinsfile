@@ -49,10 +49,10 @@ pipeline {
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
                   ls -la
-                  cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                  helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace dev
+                  helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace dev
                   '''
                 }
             }
@@ -68,10 +68,10 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                  helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace qa
+                  helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace qa
                   '''
                 }
             }
@@ -87,10 +87,10 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                  cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                   cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                  helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace staging
+                  helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace staging
                   '''
                 }
             }
@@ -115,14 +115,13 @@ pipeline {
                         rm -Rf .kube
                         mkdir .kube
                         cat $KUBECONFIG > .kube/config
-                        cp ../charts/${DOCKER_IMAGE}-values.yaml values.yml
+                        cp charts/${DOCKER_IMAGE}-values.yaml values.yml
                         cat values.yml
                         sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                        helm upgrade --install ${DOCKER_IMAGE} ../charts --values=values.yml --namespace prod
+                        helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace prod
                         '''
                     }
             }
         }
     }
 }
-
