@@ -52,9 +52,7 @@ pipeline {
                   rm -Rf .kube
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
-                  ls -la
                   cp charts/${DOCKER_IMAGE}/values-${ENV_DEV}.yaml values.yml
-                  cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                   helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace dev
                   '''
@@ -73,7 +71,6 @@ pipeline {
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
                   cp charts/${DOCKER_IMAGE}/values-${ENV_QA}.yaml values.yml
-                  cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                   helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace qa
                   '''
@@ -92,7 +89,6 @@ pipeline {
                   mkdir .kube
                   cat $KUBECONFIG > .kube/config
                   cp charts/${DOCKER_IMAGE}/values-${ENV_STAGING}.yaml values.yml
-                  cat values.yml
                   sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                   helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace staging
                   '''
@@ -120,7 +116,6 @@ pipeline {
                         mkdir .kube
                         cat $KUBECONFIG > .kube/config
                         cp charts/${DOCKER_IMAGE}/values-${ENV_PROD}.yaml values.yml
-                        cat values.yml
                         sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
                         helm upgrade --install ${DOCKER_IMAGE} charts --values=values.yml --namespace prod
                         '''
